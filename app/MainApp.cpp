@@ -6,7 +6,6 @@
 #include <iostream>
 #include <curl/curl.h>
 #include <fstream>
-#include "HttpUtility.h"
 #include "Utility.h"
 
 #include "document.h"

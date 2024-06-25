@@ -145,40 +145,40 @@ int Utility::changeFileMode(std::string filename, std::string mode)
     return result;
 }
 
-std::string Utility::calculateMD5(std::string filename)
-{
-    std::ifstream file(filename, std::ios::binary);
-    if (!file)
-    {
-        std::cerr << "Cannot open file: " << filename << std::endl;
-        return "";
-    }
+// std::string Utility::calculateMD5(std::string filename)
+// {
+//     std::ifstream file(filename, std::ios::binary);
+//     if (!file)
+//     {
+//         std::cerr << "Cannot open file: " << filename << std::endl;
+//         return "";
+//     }
 
-    MD5_CTX ctx;
-    MD5_Init(&ctx);
+//     MD5_CTX ctx;
+//     MD5_Init(&ctx);
 
-    char buffer[1024];
-    while (file)
-    {
-        file.read(buffer, sizeof(buffer));
-        std::streamsize count = file.gcount();
-        if (count > 0)
-        {
-            MD5_Update(&ctx, buffer, count);
-        }
-    }
+//     char buffer[1024];
+//     while (file)
+//     {
+//         file.read(buffer, sizeof(buffer));
+//         std::streamsize count = file.gcount();
+//         if (count > 0)
+//         {
+//             MD5_Update(&ctx, buffer, count);
+//         }
+//     }
 
-    unsigned char md[MD5_DIGEST_LENGTH];
-    MD5_Final(md, &ctx);
+//     unsigned char md[MD5_DIGEST_LENGTH];
+//     MD5_Final(md, &ctx);
 
-    std::stringstream ss;
-    for (int i = 0; i < MD5_DIGEST_LENGTH; ++i)
-    {
-        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(md[i]);
-    }
+//     std::stringstream ss;
+//     for (int i = 0; i < MD5_DIGEST_LENGTH; ++i)
+//     {
+//         ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(md[i]);
+//     }
 
-    return ss.str();
-}
+//     return ss.str();
+// }
 
 void Utility::fillVersionFile(std::string filename, std::string content)
 {
