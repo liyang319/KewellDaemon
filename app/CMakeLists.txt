@@ -4,6 +4,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include/config)
 include_directories(${PROJECT_SOURCE_DIR}/include/log)
 include_directories(${PROJECT_SOURCE_DIR}/include/network)
 include_directories(${PROJECT_SOURCE_DIR}/include/utility)
+include_directories(${PROJECT_SOURCE_DIR}/include/data)
 include_directories(${PROJECT_SOURCE_DIR}/include/thirdparty)
 include_directories(${PROJECT_SOURCE_DIR}/include/thirdparty/rapidjson)
 
@@ -12,6 +13,7 @@ add_subdirectory(config)
 add_subdirectory(log)
 add_subdirectory(network)
 add_subdirectory(utility)
+add_subdirectory(data)
 
 # all source files
 file(GLOB_RECURSE ALL_SOURCE "*.cpp" "*.c")

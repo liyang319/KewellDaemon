@@ -4,22 +4,18 @@
 #include <iostream>
 #include <chrono>
 #include <iostream>
-#include <curl/curl.h>
 #include <fstream>
 #include "Utility.h"
-
 #include "document.h"
 #include "stringbuffer.h"
 #include "writer.h"
 #include <thread>
 #include <chrono>
-
-#include <openssl/md5.h>
 #include <iomanip>
 #include <sstream>
-
 #include "Base.h"
 #include "Version.h"
+#include "UpperBroadcastReceiver.h"
 
 using namespace rapidjson;
 // maeusing namespace std;
@@ -27,4 +23,13 @@ using namespace rapidjson;
 int main()
 {
     COUT << "=========Kewell Daemon=============" << VERSION << endl;
+    UpperBroadcastReceiver receiver(12345);
+    receiver.Start();
+
+    // 运行一段时间后停止
+    while (1)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(100));
+    }
+    // receiver.Stop();
 }
