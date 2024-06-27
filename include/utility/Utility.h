@@ -6,6 +6,13 @@
 class Utility
 {
 public:
+    static std::string getSystemIP(const std::string &interfaceName = "eth0");
+
+    static std::string getSystemMac(const std::string &interfaceName = "eth0");
+
+    static void setNetworkConfig(std::string iface, std::string mask, std::string gateway, std::string dns, std::string ip,
+                                 std::string mac);
+    static bool restartNetwork();
     static std::string removeTrailingNewline(std::string str);
     static std::string getFileContent(std::string filename);
     // static std::string calculateMD5(const std::string &file_path);

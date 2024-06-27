@@ -105,10 +105,10 @@ void UpperBroadcastReceiver::Run()
 void UpperBroadcastReceiver::ProcessBroadcastCmd(const std::string &data)
 {
     std::cout << "Received broadcast message: " << data << std::endl;
-    std::string ss = "reply--" + std::to_string(index);
-    index++;
-    std::cout << "reply: " << ss << std::endl;
-    sendto(sockfd_, ss.c_str(), ss.length(), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
-    CmdDispatcher dispatcher(data);
+    // std::string ss = "reply--" + std::to_string(index);
+    // index++;
+    // std::cout << "reply: " << ss << std::endl;
+    // sendto(sockfd_, ss.c_str(), ss.length(), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
+    CmdDispatcher dispatcher(data, this);
     dispatcher.DispatchCommand();
 }

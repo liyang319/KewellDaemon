@@ -6,10 +6,11 @@
 #include "Base.h"
 #include "Utility.h"
 #include "Base.h"
+#include <arpa/inet.h>
 
 // using namespace rapidjson;
 
-CmdDispatcher::CmdDispatcher(const std::string &json_data)
+CmdDispatcher::CmdDispatcher(const std::string &json_data, UpperBroadcastReceiver *pReceiver)
 {
     // COUT<< "---"<< json_data <<endl;
     m_document.Parse(json_data.c_str());
@@ -18,6 +19,7 @@ CmdDispatcher::CmdDispatcher(const std::string &json_data)
     {
         std::cerr << "Failed to parse JSON data" << endl;
     }
+    pBroadCastReceiver = pReceiver;
 }
 
 void CmdDispatcher::DispatchCommand()
@@ -57,26 +59,23 @@ void CmdDispatcher::ProcessReportIPCmd()
     cmd.SetString("ReportIP_ack");
     doc.AddMember("cmd", cmd, doc.GetAllocator());
 
-    // std::string strIP = Utility::getSystemIP("ens33");
-    // std::string strMac = Utility::getSystemMac("ens33");
+    std::string strIP = Utility::getSystemIP("ens33");
+    std::string strMac = Utility::getSystemMac("ens33");
 
-    // rapidjson::Value ip;
-    // ip.SetString(strIP.c_str(), strIP.length(), doc.GetAllocator());
-    // rapidjson::Value mac;
-    // mac.SetString(strMac.c_str(), strMac.length(), doc.GetAllocator());
+    rapidjson::Value ip;
+    ip.SetString(strIP.c_str(), strIP.length(), doc.GetAllocator());
+    rapidjson::Value mac;
+    mac.SetString(strMac.c_str(), strMac.length(), doc.GetAllocator());
 
-    // doc.AddMember("IP", ip, doc.GetAllocator());
-    // doc.AddMember("MAC", mac, doc.GetAllocator());
+    doc.AddMember("IP", ip, doc.GetAllocator());
+    doc.AddMember("MAC", mac, doc.GetAllocator());
 
-    // rapidjson::StringBuffer buffer;
-    // rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-    // doc.Accept(writer);
-    // COUT << buffer.GetString() << endl;
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    doc.Accept(writer);
+    COUT << buffer.GetString() << endl;
 
-    // UpperportData data;
-    // std::memcpy(data.content.data(), buffer.GetString(), std::min(buffer.GetSize(), data.content.size()));
-    // data.len = std::min(buffer.GetSize(), data.content.size());
-    // AppData::getInstance().addDataToCtrlSendQueue(data);
+    sendto(pBroadCastReceiver->sockfd_, buffer.GetString(), buffer.GetSize(), 0, (struct sockaddr *)&(pBroadCastReceiver->client_addr), sizeof(pBroadCastReceiver->client_addr));
 }
 
 void CmdDispatcher::ProcessSetIPCmd()
@@ -114,26 +113,23 @@ void CmdDispatcher::ProcessSetIPCmd()
     }
     // Utility::setNetworkConfig(striface, strMASK, strGATEWAY, strDNS, strIP, strMAC); // network config
 
-    // rapidjson::Document doc;
-    // doc.SetObject();
-    // rapidjson::Value cmd;
-    // cmd.SetString("SetIP_ack");
-    // doc.AddMember("cmd", cmd, doc.GetAllocator());
+    rapidjson::Document doc;
+    doc.SetObject();
+    rapidjson::Value cmd;
+    cmd.SetString("SetIP_ack");
+    doc.AddMember("cmd", cmd, doc.GetAllocator());
 
-    // rapidjson::Value act;
-    // std::string strAck = "Setting network";
-    // act.SetString(strAck.c_str(), strAck.length(), doc.GetAllocator());
-    // doc.AddMember("act", act, doc.GetAllocator());
+    rapidjson::Value act;
+    std::string strAck = "Setting network";
+    act.SetString(strAck.c_str(), strAck.length(), doc.GetAllocator());
+    doc.AddMember("act", act, doc.GetAllocator());
 
-    // rapidjson::StringBuffer buffer;
-    // rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-    // doc.Accept(writer);
-    // COUT << buffer.GetString() << endl;
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    doc.Accept(writer);
+    COUT << buffer.GetString() << endl;
 
-    // UpperportData data;
-    // std::memcpy(data.content.data(), buffer.GetString(), std::min(buffer.GetSize(), data.content.size()));
-    // data.len = std::min(buffer.GetSize(), data.content.size());
-    // AppData::getInstance().addDataToCtrlSendQueue(data);
+    sendto(pBroadCastReceiver->sockfd_, buffer.GetString(), buffer.GetSize(), 0, (struct sockaddr *)&(pBroadCastReceiver->client_addr), sizeof(pBroadCastReceiver->client_addr));
 }
 
 void CmdDispatcher::ProcessNetResetCmd()
@@ -142,24 +138,21 @@ void CmdDispatcher::ProcessNetResetCmd()
 
     // Utility::restartNetwork(); // restrt network
 
-    // rapidjson::Document doc;
-    // doc.SetObject();
-    // rapidjson::Value cmd;
-    // cmd.SetString("NetReset_ack");
-    // doc.AddMember("cmd", cmd, doc.GetAllocator());
+    rapidjson::Document doc;
+    doc.SetObject();
+    rapidjson::Value cmd;
+    cmd.SetString("NetReset_ack");
+    doc.AddMember("cmd", cmd, doc.GetAllocator());
 
-    // rapidjson::Value act;
-    // std::string strAck = "Restarting network";
-    // act.SetString(strAck.c_str(), strAck.length(), doc.GetAllocator());
-    // doc.AddMember("act", act, doc.GetAllocator());
+    rapidjson::Value act;
+    std::string strAck = "Restarting network";
+    act.SetString(strAck.c_str(), strAck.length(), doc.GetAllocator());
+    doc.AddMember("act", act, doc.GetAllocator());
 
-    // rapidjson::StringBuffer buffer;
-    // rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-    // doc.Accept(writer);
-    // COUT << buffer.GetString() << endl;
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    doc.Accept(writer);
+    COUT << buffer.GetString() << endl;
 
-    // UpperportData data;
-    // std::memcpy(data.content.data(), buffer.GetString(), std::min(buffer.GetSize(), data.content.size()));
-    // data.len = std::min(buffer.GetSize(), data.content.size());
-    // AppData::getInstance().addDataToCtrlSendQueue(data);
+    sendto(pBroadCastReceiver->sockfd_, buffer.GetString(), buffer.GetSize(), 0, (struct sockaddr *)&(pBroadCastReceiver->client_addr), sizeof(pBroadCastReceiver->client_addr));
 }

@@ -3,12 +3,19 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include "openssl/md5.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
 #include "Base.h"
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <net/if.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <arpa/inet.h>
+#include <netpacket/packet.h>
+#include <cstdlib>
 
 #define ROTATE_LEFT(x, n) (((x) << (n)) | ((x) >> (32 - (n))))
 
@@ -398,4 +405,98 @@ void Utility::CloseWatchDog()
 {
     std::cout << "-----------CloseWatchDog----------" << endl;
     system("echo V > /dev/watchdog");
+}
+/// @brief
+/// @param interfaceName
+/// @return /
+std::string Utility::getSystemIP(const std::string &interfaceName)
+{
+    int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd < 0)
+    {
+        perror("socket failed");
+        return "";
+    }
+
+    struct ifreq ifr;
+    memset(&ifr, 0, sizeof(ifr));
+    strncpy(ifr.ifr_name, interfaceName.c_str(), IFNAMSIZ);
+
+    struct sockaddr_in *addr = reinterpret_cast<struct sockaddr_in *>(&ifr.ifr_addr);
+    addr->sin_family = AF_INET;
+
+    if (ioctl(fd, SIOCGIFADDR, &ifr) == 0)
+    {
+        close(fd);
+        return std::string(inet_ntoa(addr->sin_addr));
+    }
+    close(fd);
+    return "";
+}
+
+std::string Utility::getSystemMac(const std::string &interfaceName)
+{
+    int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd < 0)
+    {
+        perror("socket failed");
+        return "";
+    }
+
+    struct ifreq ifr;
+    memset(&ifr, 0, sizeof(ifr));
+    strncpy(ifr.ifr_name, interfaceName.c_str(), IFNAMSIZ);
+
+    struct sockaddr_ll addr;
+    if (ioctl(fd, SIOCGIFHWADDR, &ifr) == 0)
+    {
+        close(fd);
+        char mac[18];
+        snprintf(mac, sizeof(mac), "%02x:%02x:%02x:%02x:%02x:%02x",
+                 (unsigned char)ifr.ifr_hwaddr.sa_data[0],
+                 (unsigned char)ifr.ifr_hwaddr.sa_data[1],
+                 (unsigned char)ifr.ifr_hwaddr.sa_data[2],
+                 (unsigned char)ifr.ifr_hwaddr.sa_data[3],
+                 (unsigned char)ifr.ifr_hwaddr.sa_data[4],
+                 (unsigned char)ifr.ifr_hwaddr.sa_data[5]);
+        return std::string(mac);
+    }
+
+    close(fd);
+    return "";
+}
+
+void Utility::setNetworkConfig(std::string iface, std::string mask, std::string gateway, std::string dns, std::string ip,
+                               std::string mac)
+{
+    std::string command = "ifconfig " + iface + " " + ip + " netmask " + mask + " hw ether " + mac;
+
+    // Set IP address, netmask and MAC address
+    system(command.c_str());
+
+    // Set default gateway
+    command = "route add default gw " + gateway;
+    system(command.c_str());
+
+    // Set DNS server
+    command = "echo \"nameserver " + dns + "\" > /etc/resolv.conf";
+    system(command.c_str());
+}
+
+bool Utility::restartNetwork()
+{
+    // 执行重启网络的命令
+    int result = system("sudo systemctl restart network");
+
+    // 检查命令执行结果
+    if (result == 0)
+    {
+        std::cout << "Network has been restarted successfully." << std::endl;
+        return true;
+    }
+    else
+    {
+        std::cout << "Failed to restart network." << std::endl;
+        return false;
+    }
 }
