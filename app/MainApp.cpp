@@ -16,6 +16,7 @@
 #include "Base.h"
 #include "Version.h"
 #include "UpperBroadcastReceiver.h"
+#include "Daemon.hpp"
 
 using namespace rapidjson;
 // maeusing namespace std;
@@ -23,9 +24,10 @@ using namespace rapidjson;
 int main()
 {
     COUT << "=========Kewell Daemon=============" << VERSION << endl;
-    UpperBroadcastReceiver receiver(12345);
-    receiver.Start();
-
+    // UpperBroadcastReceiver receiver;
+    // receiver.Start();
+    Daemon daemon;
+    daemon.run();
     // 运行一段时间后停止
     while (1)
     {

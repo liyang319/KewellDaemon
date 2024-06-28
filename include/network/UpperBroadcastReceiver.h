@@ -6,10 +6,13 @@
 #include <functional>
 #include <netinet/in.h>
 
+#define BROADCAST_PORT 12345
+
 class UpperBroadcastReceiver
 {
 public:
     UpperBroadcastReceiver(int port);
+    UpperBroadcastReceiver();
     ~UpperBroadcastReceiver();
 
     void Start();

@@ -9,6 +9,16 @@
 #define PORT 12345
 #define MAX_BUFFER_SIZE 1024
 
+UpperBroadcastReceiver::UpperBroadcastReceiver()
+    : port_(BROADCAST_PORT), sockfd_(-1), running_(false)
+{
+    memset(&broadcastAddr, 0, sizeof(broadcastAddr));
+    broadcastAddr.sin_family = AF_INET;
+    broadcastAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    broadcastAddr.sin_port = htons(port_);
+    index = 0;
+}
+
 UpperBroadcastReceiver::UpperBroadcastReceiver(int port)
     : port_(port), sockfd_(-1), running_(false)
 {
