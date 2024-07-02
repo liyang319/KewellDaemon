@@ -24,13 +24,13 @@ file(GLOB_RECURSE ALL_SOURCE "*.cpp" "*.c")
 # )
 # set(ARM OFF) 
 
-if(${ARM})
-  link_directories(${PROJECT_SOURCE_DIR}/lib/arm/libcurl)
-  link_directories(${PROJECT_SOURCE_DIR}/lib/arm/openssl)
-else()
-  link_directories(${PROJECT_SOURCE_DIR}/lib/x86/libcurl)
-  link_directories(${PROJECT_SOURCE_DIR}/lib/x86/openssl)
-endif()
+# if(${ARM})
+#   link_directories(${PROJECT_SOURCE_DIR}/lib/arm/libcurl)
+#   link_directories(${PROJECT_SOURCE_DIR}/lib/arm/openssl)
+# else()
+#   link_directories(${PROJECT_SOURCE_DIR}/lib/x86/libcurl)
+#   link_directories(${PROJECT_SOURCE_DIR}/lib/x86/openssl)
+# endif()
 
 
 # create the executable
@@ -40,6 +40,6 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/output)
 # execute file 
 add_executable(${EXECUTABLE_NAME} ${ALL_SOURCE})
 
-target_link_libraries(${EXECUTABLE_NAME} curl)
-target_link_libraries(${EXECUTABLE_NAME} ssl)
-target_link_libraries(${EXECUTABLE_NAME} crypto)
+target_link_libraries(${EXECUTABLE_NAME} pthread)
+target_link_libraries(${EXECUTABLE_NAME} rt)
+# target_link_libraries(${EXECUTABLE_NAME} crypto)
