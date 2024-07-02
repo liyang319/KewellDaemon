@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(KewellMidware VERSION 1.0.0)
 
-set(ARM OFF) 
+set(ARM ON) 
 set(LINUXBUILD ON)
 
 if(${ARM})
-    # set(ARM_CROSS /usr/local/arm/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin)
-    set(ARM_CROSS /home/yli/Downloads/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin)
-    set(CMAKE_CXX_COMPILER ${ARM_CROSS}/arm-linux-gnueabihf-g++)
+    set(ARM_CROSS /home/yli/Downloads/toolchain/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin)
+    set(CMAKE_CXX_COMPILER ${ARM_CROSS}/aarch64-linux-gnu-g++)
 endif()
 
 if(${LINUXBUILD})

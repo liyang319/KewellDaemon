@@ -1,6 +1,6 @@
 #include "Daemon.hpp"
-#include "IPC.hpp"
-#include "file_log.hpp"
+#include "IPC.h"
+// #include "file_log.hpp"
 // #include "heart_beat.hpp"
 // #include "special_broadcast.hpp"
 #include <cstdlib> // 用于 system 函数
@@ -15,6 +15,9 @@ Daemon::Daemon()
 {
     no_running_count = 0;
     no_alive_count = 0;
+    loopIndex = 0;
+    bPowerSupply = true;
+    gpio.initialize();
 }
 
 Daemon::~Daemon()
@@ -28,8 +31,13 @@ void Daemon::run()
 
     while (true)
     {
-        checkMainProcess(); // 检查数据中心状态
-        usleep(500000);     // 500毫秒
+        checkMainProcess(); // 检查主进程是否还在，如果不在，就启动
+        // bPowerSupply = gpio.readValue();
+        // if (!bPowerSupply)
+        // {
+        //     ipc.send_message("Poweroff");
+        // }
+        sleep(1);
     }
 }
 
