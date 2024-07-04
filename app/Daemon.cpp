@@ -11,13 +11,15 @@
 #include "Base.h"
 #include "Utility.h"
 
+#define POWEROFF_INDEX 10
+
 Daemon::Daemon()
 {
     no_running_count = 0;
     no_alive_count = 0;
     loopIndex = 0;
     bPowerSupply = true;
-    gpio.initialize();
+    // gpio.initialize();
 }
 
 Daemon::~Daemon()
@@ -28,15 +30,33 @@ void Daemon::run()
 {
     // daemonize(); // 进入守护进程模式
     // broadcastReceiver.Start();
+    // ipc.clear_message_queue();
 
     while (true)
     {
-        checkMainProcess(); // 检查主进程是否还在，如果不在，就启动
-        // bPowerSupply = gpio.readValue();
-        // if (!bPowerSupply)
-        // {
-        //     ipc.send_message("Poweroff");
-        // }
+        if (bPowerSupply)
+        {
+            COUT << "----check----" << std::endl;
+            // checkMainProcess(); // 检查主进程是否还在，如果不在，就启动
+        }
+        else
+        {
+            std::string message = "";
+            message = IPC::getInstance().recv_message();
+            COUT << "----message----" << message << std::endl;
+            size_t saveok_found = message.find("SaveOK");
+            if (saveok_found != std::string::npos)
+            {
+                COUT << "-----SAVE OK NOW------" << std::endl;
+                break;
+            }
+        }
+        // 模拟掉电触发
+        if (loopIndex++ > POWEROFF_INDEX)
+        {
+            bPowerSupply = false;
+            IPC::getInstance().send_message("Poweroff");
+        }
         sleep(1);
     }
 }

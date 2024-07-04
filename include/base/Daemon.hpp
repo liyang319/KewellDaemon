@@ -26,7 +26,7 @@ private:
     bool isMainProcessAlive();
     // bool is_data_center_active();
 
-    IPC ipc;
+    // IPC ipc;
     int loopIndex;
     UpperBroadcastReceiver broadcastReceiver;
 

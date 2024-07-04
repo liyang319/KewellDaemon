@@ -6,8 +6,11 @@
 class IPC
 {
 public:
-    IPC();
-    ~IPC();
+    static IPC &getInstance()
+    {
+        static IPC instance;
+        return instance;
+    }
 
     void open_msgqueue();
     void close_msgqueue();
@@ -16,6 +19,9 @@ public:
     void clear_message_queue();
 
 private:
+    IPC();
+    ~IPC();
+
     int mq_id;
 };
 
