@@ -12,6 +12,7 @@
 #include "Utility.h"
 
 #define POWEROFF_INDEX 10
+#define DEFAULT_TIMEOUT_CHECKING_PROCESS 3
 
 Daemon::Daemon()
 {
@@ -29,14 +30,15 @@ Daemon::~Daemon()
 void Daemon::run()
 {
     // daemonize(); // 进入守护进程模式
-    // broadcastReceiver.Start();
+    broadcastReceiver.Start();
     // ipc.clear_message_queue();
 
     while (true)
     {
         if (bPowerSupply)
         {
-            COUT << "----check----" << std::endl;
+            ;
+            // COUT << "----check----" << std::endl;
             // checkMainProcess(); // 检查主进程是否还在，如果不在，就启动
         }
         else
@@ -52,11 +54,11 @@ void Daemon::run()
             }
         }
         // 模拟掉电触发
-        if (loopIndex++ > POWEROFF_INDEX)
-        {
-            bPowerSupply = false;
-            IPC::getInstance().send_message("Poweroff");
-        }
+        // if (loopIndex++ > POWEROFF_INDEX)
+        // {
+        //     bPowerSupply = false;
+        //     IPC::getInstance().send_message("Poweroff");
+        // }
         sleep(1);
     }
 }
@@ -99,7 +101,7 @@ void Daemon::checkMainProcess()
     // COUT << "----checkMainProcess----" << std::endl;
     if (!isMainProcessAlive())
     {
-        // COUT << "-------No main process-------" << std::endl;
+        COUT << "-------No main process-------" << std::endl;
         // stopProcess(PROCESS_NAME);
         Utility::killApp(PROCESS_NAME);
         // 再启动“数据中心”这个程序
@@ -147,7 +149,7 @@ bool Daemon::isMainProcessAlive()
     {
         no_running_count++;
     }
-    if (no_running_count >= 20)
+    if (no_running_count >= DEFAULT_TIMEOUT_CHECKING_PROCESS)
     {
         no_running_count = 0;
         return false;

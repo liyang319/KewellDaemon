@@ -8,6 +8,8 @@
 #include "Base.h"
 #include <arpa/inet.h>
 
+#define IPCONFIGFILE "/etc/network/interfaces"
+#define DEFAULT_IFACE "eth1"
 // using namespace rapidjson;
 
 CmdDispatcher::CmdDispatcher(const std::string &json_data, UpperBroadcastReceiver *pReceiver)
@@ -59,8 +61,8 @@ void CmdDispatcher::ProcessReportIPCmd()
     cmd.SetString("ReportIP_ack");
     doc.AddMember("cmd", cmd, doc.GetAllocator());
 
-    std::string strIP = Utility::getSystemIP("ens33");
-    std::string strMac = Utility::getSystemMac("ens33");
+    std::string strIP = Utility::getSystemIP(DEFAULT_IFACE);
+    std::string strMac = Utility::getSystemMac(DEFAULT_IFACE);
 
     rapidjson::Value ip;
     ip.SetString(strIP.c_str(), strIP.length(), doc.GetAllocator());
@@ -111,7 +113,7 @@ void CmdDispatcher::ProcessSetIPCmd()
     {
         strMAC = m_document["MAC"].GetString();
     }
-    // Utility::setNetworkConfig(striface, strMASK, strGATEWAY, strDNS, strIP, strMAC); // network config
+    Utility::modifyNetworkConfig(IPCONFIGFILE, striface, strMASK, strGATEWAY, strDNS, strIP, strMAC); // network config
 
     rapidjson::Document doc;
     doc.SetObject();
@@ -136,7 +138,7 @@ void CmdDispatcher::ProcessNetResetCmd()
 {
     COUT << "Processing NetReset command" << endl;
 
-    // Utility::restartNetwork(); // restrt network
+    Utility::restartNetwork(); // restrt network
 
     rapidjson::Document doc;
     doc.SetObject();

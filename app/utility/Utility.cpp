@@ -483,6 +483,79 @@ void Utility::setNetworkConfig(std::string iface, std::string mask, std::string 
     system(command.c_str());
 }
 
+// 修改系统文件实现IP地址的切换
+void Utility::modifyNetworkConfig(const std::string &configFile, const std::string &interface, const std::string &ip, const std::string &subnet, const std::string &gateway, const std::string &dns, const std::string &mac)
+{
+    std::ifstream inFile(configFile); // 打开输入文件
+    std::stringstream strStream;      // stringstream流
+
+    // Read the file into stringstream
+    strStream << inFile.rdbuf();
+    std::string fileContent = strStream.str();
+
+    // Find the position of the interface in the file
+    size_t pos = fileContent.find("iface " + interface);
+
+    if (pos != std::string::npos)
+    {
+        // Modify IP address
+        pos = fileContent.find("address ", pos);
+        if (pos != std::string::npos)
+        {
+            pos += std::string("address ").length();
+            size_t endPos = fileContent.find("\n", pos);
+            fileContent.replace(pos, endPos - pos, ip);
+        }
+
+        // Modify Subnet Mask
+        pos = fileContent.find("netmask ", pos);
+        if (pos != std::string::npos)
+        {
+            pos += std::string("netmask ").length();
+            size_t endPos = fileContent.find("\n", pos);
+            fileContent.replace(pos, endPos - pos, subnet);
+        }
+
+        // Modify Gateway
+        pos = fileContent.find("gateway ", pos);
+        if (pos != std::string::npos)
+        {
+            pos += std::string("gateway ").length();
+            size_t endPos = fileContent.find("\n", pos);
+            fileContent.replace(pos, endPos - pos, gateway);
+        }
+
+        // Modify DNS
+        pos = fileContent.find("dns-nameservers ", pos);
+        if (pos != std::string::npos)
+        {
+            pos += std::string("dns-nameservers ").length();
+            size_t endPos = fileContent.find("\n", pos);
+            fileContent.replace(pos, endPos - pos, dns);
+        }
+
+        // Modify MAC address
+        pos = fileContent.find("hwaddress ether", pos);
+        if (pos != std::string::npos)
+        {
+            pos += std::string("hwaddress ether").length();
+            size_t endPos = fileContent.find("\n", pos);
+            fileContent.replace(pos, endPos - pos, mac);
+        }
+
+        // Write the modified content back to the file
+        std::ofstream outFile(configFile);
+        outFile << fileContent;
+        outFile.close();
+
+        std::cout << "Network configuration updated successfully." << std::endl;
+    }
+    else
+    {
+        std::cout << "Interface not found in the configuration file." << std::endl;
+    }
+}
+
 bool Utility::restartNetwork()
 {
     // 执行重启网络的命令

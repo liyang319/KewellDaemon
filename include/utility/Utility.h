@@ -35,6 +35,7 @@ public:
     static bool isFileEmpty(std::string filename);
     static void FeedWatchDog();
     static void CloseWatchDog();
+    static void modifyNetworkConfig(const std::string &configFile, const std::string &interface, const std::string &ip, const std::string &subnet, const std::string &gateway, const std::string &dns, const std::string &mac);
 };
 
 #endif // UTILITY_H
