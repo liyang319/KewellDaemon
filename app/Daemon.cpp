@@ -37,9 +37,8 @@ void Daemon::run()
     {
         if (bPowerSupply)
         {
-            ;
             // COUT << "----check----" << std::endl;
-            // checkMainProcess(); // 检查主进程是否还在，如果不在，就启动
+            checkMainProcess(); // 检查主进程是否还在，如果不在，就启动
         }
         else
         {

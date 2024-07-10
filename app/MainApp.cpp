@@ -29,9 +29,9 @@ int main()
     Daemon daemon;
     daemon.run();
     // 运行一段时间后停止
-    while (1)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(100));
-    }
+    // while (1)
+    // {
+    //     std::this_thread::sleep_for(std::chrono::seconds(100));
+    // }
     // receiver.Stop();
 }
